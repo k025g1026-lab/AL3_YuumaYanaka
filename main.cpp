@@ -25,7 +25,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		gameScene->Draw();
 
-		// ここに描画処理を追加する
+		// ここに描画処理を追加する.
 		dxCommon->PostDraw();
 	}
 
