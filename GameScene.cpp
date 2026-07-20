@@ -35,7 +35,7 @@ void GameScene::Initialize() {
 	Model* playerModel = Model::Create();
 	uint32_t playerTexture = TextureManager::Load("mario.jpg");
 	player_ = new Player();
-	player_->Initialize(playerModel, playerTexture, &debugCamera_->GetCamera());
+	player_->Initialize(playerModel, playerTexture, &camera_);
 
 	// ブロック用モデルの生成
 	modelBlock_ = Model::Create();
