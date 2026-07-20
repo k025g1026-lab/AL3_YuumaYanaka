@@ -2,6 +2,7 @@
 #pragma once
 #include "Player.h"
 #include <kamataengine.h>
+#include <vector>
 
 // ゲームシーン
 class GameScene {
@@ -25,4 +26,16 @@ private:
 
 	// デバッグカメラ
 	KamataEngine::DebugCamera* debugCamera_ = nullptr;
+
+	// 通常カメラ
+	KamataEngine::Camera camera_;
+
+	// デバッグカメラ有効フラグ
+	bool isDebugCameraActive_ = false;
+
+	// ブロック用モデル
+	KamataEngine::Model* modelBlock_ = nullptr;
+
+	// ブロック用のワールドトランスフォーム（二次元vector）
+	std::vector<std::vector<KamataEngine::WorldTransform*>> worldTransformBlocks_;
 };
