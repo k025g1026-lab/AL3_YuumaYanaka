@@ -46,7 +46,14 @@ void GameScene::Initialize() {
 	// 自キャラ関連
 	Model* playerModel = Model::CreateFromOBJ("player", true);
 	player_ = new Player();
-	player_->Initialize(playerModel, &camera_);
+
+	// マップチップフィールド生成
+	mapChipField_ = new MapChipField();
+	mapChipField_->LoadMapChipCsv("Resources/map.csv");
+
+	// 初期位置をマップチップ番号で指定
+	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18); // 左上から適当な位置（調整してください）
+	player_->Initialize(playerModel, &camera_, playerPosition);
 
 	// 天球モデル生成
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
@@ -57,10 +64,6 @@ void GameScene::Initialize() {
 
 	// ブロック用モデルの生成
 	modelBlock_ = Model::CreateFromOBJ("block", true);
-
-	// マップチップフィールド生成
-	mapChipField_ = new MapChipField();
-	mapChipField_->LoadMapChipCsv("Resources/map.csv");
 
 	// ブロック生成
 	GenerateBlocks();

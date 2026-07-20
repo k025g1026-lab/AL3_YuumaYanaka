@@ -55,15 +55,16 @@ KamataEngine::Matrix4x4 MakeTranslateMatrix(const Vector3& translate) {
 }
 
 KamataEngine::Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2) {
-		Matrix4x4 result = {};
-		for (int i = 0; i < 4; ++i) {
-			for (int j = 0; j < 4; ++j) {
-				for (int k = 0; k < 4; ++k) {
-					result.m[i][j] += m1.m[i][k] * m2.m[k][j];
-				}
+	Matrix4x4 result = {};
+	for (int i = 0; i < 4; ++i) {
+		for (int j = 0; j < 4; ++j) {
+			result.m[i][j] = 0.0f;
+			for (int k = 0; k < 4; ++k) {
+				result.m[i][j] += m1.m[i][k] * m2.m[k][j];
 			}
 		}
-		return result;
+	}
+	return result;
 }
 
 KamataEngine::Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate) {
@@ -74,11 +75,9 @@ KamataEngine::Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& ro
 	// XYZ順の回転行列合成（サンプルに準拠）
 	Matrix4x4 rotateMatrix = Multiply(rotateXMatrix, Multiply(rotateYMatrix, rotateZMatrix));
 	// 回転 * スケール
-	Matrix4x4 rotateScaleMatrix = Multiply(rotateMatrix, scaleMatrix);
+	Matrix4x4 rotateScaleMatrix = Multiply(scaleMatrix, rotateMatrix);
 	// 平行移動 * (回転 * スケール)
 	Matrix4x4 translateMatrix = MakeTranslateMatrix(translate);
-	Matrix4x4 result = Multiply(translateMatrix, rotateScaleMatrix);
+	Matrix4x4 result = Multiply(rotateScaleMatrix, translateMatrix);
 	return result;
 }
-
-
