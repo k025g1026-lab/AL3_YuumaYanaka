@@ -15,6 +15,9 @@ GameScene::~GameScene() {
 	delete modelSkydome_;
 	modelSkydome_ = nullptr;
 
+	delete cameraController_;
+	cameraController_ = nullptr;
+
 	delete mapChipField_;
 	mapChipField_ = nullptr;
 
@@ -43,6 +46,10 @@ void GameScene::Initialize() {
 	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
 
+	// カメラコントローラー生成
+	cameraController_ = new CameraController();
+	cameraController_->Initialize();
+
 	// 自キャラ関連
 	Model* playerModel = Model::CreateFromOBJ("player", true);
 	player_ = new Player();
@@ -52,8 +59,15 @@ void GameScene::Initialize() {
 	mapChipField_->LoadMapChipCsv("Resources/map.csv");
 
 	// 初期位置をマップチップ番号で指定
-	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18); // 左上から適当な位置（調整してください）
+	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
 	player_->Initialize(playerModel, &camera_, playerPosition);
+
+	// カメラコントローラーに追従対象を設定
+	cameraController_->SetTarget(player_);
+
+	// 移動範囲の指定
+	CameraController::Rect movableArea = {11.0f, 88.0f, 6.0f, 100.0f};
+	cameraController_->SetMovableArea(movableArea);
 
 	// 天球モデル生成
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
@@ -88,7 +102,10 @@ void GameScene::Update() {
 		camera_.matProjection = debugCamera_->GetCamera().matProjection;
 		camera_.TransferMatrix();
 	} else {
-		camera_.UpdateMatrix();
+		cameraController_->Update();
+		camera_.matView = cameraController_->GetCamera().matView;
+		camera_.matProjection = cameraController_->GetCamera().matProjection;
+		camera_.TransferMatrix();
 	}
 
 	// 自キャラの更新

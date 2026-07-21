@@ -1,5 +1,6 @@
 // [GameScene.h]
 #pragma once
+#include "CameraController.h"
 #include "MapChipField.h"
 #include "Player.h"
 #include "Skydome.h"
@@ -40,6 +41,9 @@ private:
 
 	// 通常カメラ
 	KamataEngine::Camera camera_;
+
+	// カメラコントローラー
+	CameraController* cameraController_ = nullptr;
 
 	// デバッグカメラ有効フラグ
 	bool isDebugCameraActive_ = false;
