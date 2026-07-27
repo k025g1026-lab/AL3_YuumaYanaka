@@ -1,6 +1,9 @@
 // [Enemy.h]
 #pragma once
+#include "AABB.h"
 #include "KamataEngine.h"
+
+class Player;
 
 /// <summary>
 /// 敵
@@ -25,6 +28,21 @@ public:
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// ワールド座標を取得
+	/// </summary>
+	KamataEngine::Vector3 GetWorldPosition();
+
+	/// <summary>
+	/// AABBを取得
+	/// </summary>
+	AABB GetAABB();
+
+	/// <summary>
+	/// 衝突応答
+	/// </summary>
+	void OnCollision(const Player* player);
+
 private:
 	// ワールド変換データ
 	KamataEngine::WorldTransform worldTransform_;
@@ -48,4 +66,8 @@ private:
 
 	// 経過時間
 	float walkTimer_ = 0.0f;
+
+	// 当たり判定サイズ
+	static inline const float kWidth = 0.8f;
+	static inline const float kHeight = 0.8f;
 };

@@ -1,6 +1,7 @@
 // [Player.cpp]
 #define NOMINMAX
 #include "Player.h"
+#include "Enemy.h"
 #include "MapChipField.h"
 #include "Matrix.h"
 #include <algorithm>
@@ -69,6 +70,32 @@ void Player::Update() {
 void Player::Draw() {
 	// 自キャラの描画
 	model_->Draw(worldTransform_, *camera_);
+}
+
+KamataEngine::Vector3 Player::GetWorldPosition() {
+	// ワールド座標を入れる変数
+	KamataEngine::Vector3 worldPos;
+	// ワールド行列の平行移動成分を取得（ワールド座標）
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+	return worldPos;
+}
+
+AABB Player::GetAABB() {
+	KamataEngine::Vector3 worldPos = GetWorldPosition();
+
+	AABB aabb;
+	aabb.min = {worldPos.x - kWidth / 2.0f, worldPos.y - kHeight / 2.0f, worldPos.z - kWidth / 2.0f};
+	aabb.max = {worldPos.x + kWidth / 2.0f, worldPos.y + kHeight / 2.0f, worldPos.z + kWidth / 2.0f};
+
+	return aabb;
+}
+
+void Player::OnCollision(const Enemy* enemy) {
+	(void)enemy;
+	// ジャンプ開始（仮処理）
+	velocity_.y += kJumpAcceleration;
 }
 
 void Player::InputMove() {

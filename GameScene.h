@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "Skydome.h"
 #include <kamataengine.h>
+#include <list>
 #include <vector>
 
 // ゲームシーン
@@ -24,6 +25,9 @@ public:
 	// ブロック生成
 	void GenerateBlocks();
 
+	// 全ての当たり判定を行う
+	void CheckAllCollisions();
+
 	// デストラクタ
 	~GameScene();
 
@@ -32,7 +36,10 @@ private:
 	Player* player_ = nullptr;
 
 	// 敵
-	Enemy* enemy_ = nullptr;
+	std::list<Enemy*> enemies_;
+
+	// 敵用モデル
+	KamataEngine::Model* modelEnemy_ = nullptr;
 
 	// 天球
 	Skydome* skydome_ = nullptr;

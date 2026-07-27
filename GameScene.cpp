@@ -1,6 +1,7 @@
 // [GameScene.cpp]
 #include "GameScene.h"
 #include "2d/ImGuiManager.h"
+#include "AABB.h"
 #include "Matrix.h"
 
 using namespace KamataEngine;
@@ -9,8 +10,14 @@ GameScene::~GameScene() {
 	delete player_;
 	player_ = nullptr;
 
-	delete enemy_;
-	enemy_ = nullptr;
+	// 敵の解放
+	for (Enemy* enemy : enemies_) {
+		delete enemy;
+	}
+	enemies_.clear();
+
+	delete modelEnemy_;
+	modelEnemy_ = nullptr;
 
 	delete skydome_;
 	skydome_ = nullptr;
@@ -75,12 +82,18 @@ void GameScene::Initialize() {
 	CameraController::Rect movableArea = {11.0f, 88.0f, 6.0f, 100.0f};
 	cameraController_->SetMovableArea(movableArea);
 
-	// 敵関連
-	Model* enemyModel = Model::CreateFromOBJ("enemy", true);
-	enemy_ = new Enemy();
-	// 敵の初期位置（マップチップで指定）
-	Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(10, 18);
-	enemy_->Initialize(enemyModel, &camera_, enemyPosition);
+	// 敵モデル生成
+	modelEnemy_ = Model::CreateFromOBJ("enemy", true);
+
+	// 敵の生成（複数）
+	const int32_t enemyCount = 5;
+	for (int32_t i = 0; i < enemyCount; ++i) {
+		Enemy* newEnemy = new Enemy();
+		// 一体ずつ異なる座標をセット
+		Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(8 + i * 6, 18);
+		newEnemy->Initialize(modelEnemy_, &camera_, enemyPosition);
+		enemies_.push_back(newEnemy);
+	}
 
 	// 天球モデル生成
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
@@ -125,8 +138,10 @@ void GameScene::Update() {
 	player_->Update();
 
 	// 敵の更新
-	if (enemy_) {
-		enemy_->Update();
+	for (Enemy* enemy : enemies_) {
+		if (enemy) {
+			enemy->Update();
+		}
 	}
 
 	// 天球の更新
@@ -142,6 +157,9 @@ void GameScene::Update() {
 			worldTransformBlock->TransferMatrix();
 		}
 	}
+
+	// 全ての当たり判定を行う（最後に呼ぶ）
+	CheckAllCollisions();
 }
 
 void GameScene::Draw() {
@@ -152,8 +170,10 @@ void GameScene::Draw() {
 	player_->Draw();
 
 	// 敵の描画
-	if (enemy_) {
-		enemy_->Draw();
+	for (Enemy* enemy : enemies_) {
+		if (enemy) {
+			enemy->Draw();
+		}
 	}
 
 	// 天球の描画
@@ -171,6 +191,33 @@ void GameScene::Draw() {
 
 	// 3Dモデル描画後処理
 	Model::PostDraw();
+}
+
+void GameScene::CheckAllCollisions() {
+#pragma region 自キャラと敵キャラの当たり判定
+	// 判定対象1と2の座標
+	AABB aabb1, aabb2;
+
+	// 自キャラの座標
+	aabb1 = player_->GetAABB();
+
+	// 自キャラと敵全ての当たり判定
+	for (Enemy* enemy : enemies_) {
+		if (!enemy) {
+			continue;
+		}
+		// 敵弾の座標
+		aabb2 = enemy->GetAABB();
+
+		// AABB同士の交差判定
+		if (IsCollision(aabb1, aabb2)) {
+			// 自キャラの衝突時コールバックを呼び出す
+			player_->OnCollision(enemy);
+			// 敵弾の衝突時コールバックを呼び出す
+			enemy->OnCollision(player_);
+		}
+	}
+#pragma endregion
 }
 
 void GameScene::GenerateBlocks() {

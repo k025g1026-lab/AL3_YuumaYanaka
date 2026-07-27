@@ -1,9 +1,11 @@
 // [Player.h]
 #pragma once
+#include "AABB.h"
 #include "KamataEngine.h"
 #include <array>
 
 class MapChipField;
+class Enemy;
 
 /// <summary>
 /// 自キャラ
@@ -42,6 +44,21 @@ public:
 	/// マップチップフィールドをセット
 	/// </summary>
 	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
+
+	/// <summary>
+	/// ワールド座標を取得
+	/// </summary>
+	KamataEngine::Vector3 GetWorldPosition();
+
+	/// <summary>
+	/// AABBを取得
+	/// </summary>
+	AABB GetAABB();
+
+	/// <summary>
+	/// 衝突応答
+	/// </summary>
+	void OnCollision(const Enemy* enemy);
 
 private:
 	// ワールド変換データ
@@ -102,10 +119,10 @@ private:
 
 	// マップとの当たり判定情報
 	struct CollisionMapInfo {
-		bool ceiling = false;           // 天井衝突フラグ
-		bool landing = false;           // 着地フラグ
-		bool hitWall = false;           // 壁接触フラグ
-		KamataEngine::Vector3 movement; // 移動量
+		bool ceiling = false;                // 天井衝突フラグ
+		bool landing = false;                // 着地フラグ
+		bool hitWall = false;                // 壁接触フラグ
+		KamataEngine::Vector3 movement = {}; // 移動量
 	};
 
 	// 移動入力
@@ -134,7 +151,6 @@ private:
 
 	// 壁に接触している場合の処理
 	void OnCollisionWall(const CollisionMapInfo& info);
-
 
 	// 接地状態の切り替え処理
 	void SwitchOnGround(const CollisionMapInfo& info);
