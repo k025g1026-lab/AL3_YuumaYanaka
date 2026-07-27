@@ -92,11 +92,7 @@ AABB Player::GetAABB() {
 	return aabb;
 }
 
-void Player::OnCollision(const Enemy* enemy) {
-	(void)enemy;
-	// ジャンプ開始（仮処理）
-	velocity_.y += kJumpAcceleration;
-}
+void Player::OnCollision(const Enemy* enemy) { (void)enemy; }
 
 void Player::InputMove() {
 	// 接地状態

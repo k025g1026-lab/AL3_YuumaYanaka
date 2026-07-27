@@ -1,6 +1,7 @@
 // [GameScene.h]
 #pragma once
 #include "CameraController.h"
+#include "DeathParticles.h"
 #include "Enemy.h"
 #include "MapChipField.h"
 #include "Player.h"
@@ -40,6 +41,12 @@ private:
 
 	// 敵用モデル
 	KamataEngine::Model* modelEnemy_ = nullptr;
+
+	// デスパーティクル
+	DeathParticles* deathParticles_ = nullptr;
+
+	// デスパーティクル用モデル
+	KamataEngine::Model* modelParticle_ = nullptr;
 
 	// 天球
 	Skydome* skydome_ = nullptr;

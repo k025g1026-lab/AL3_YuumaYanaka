@@ -19,6 +19,13 @@ GameScene::~GameScene() {
 	delete modelEnemy_;
 	modelEnemy_ = nullptr;
 
+	// デスパーティクルの解放
+	delete deathParticles_;
+	deathParticles_ = nullptr;
+
+	delete modelParticle_;
+	modelParticle_ = nullptr;
+
 	delete skydome_;
 	skydome_ = nullptr;
 
@@ -95,6 +102,13 @@ void GameScene::Initialize() {
 		enemies_.push_back(newEnemy);
 	}
 
+	// デスパーティクル用モデル生成
+	modelParticle_ = Model::CreateFromOBJ("deathParticle", true);
+
+	// 仮の生成処理。後で消す。
+	deathParticles_ = new DeathParticles();
+	deathParticles_->Initialize(modelParticle_, &camera_, playerPosition);
+
 	// 天球モデル生成
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 
@@ -144,6 +158,11 @@ void GameScene::Update() {
 		}
 	}
 
+	// デスパーティクルの更新
+	if (deathParticles_) {
+		deathParticles_->Update();
+	}
+
 	// 天球の更新
 	skydome_->Update();
 
@@ -174,6 +193,11 @@ void GameScene::Draw() {
 		if (enemy) {
 			enemy->Draw();
 		}
+	}
+
+	// デスパーティクルの描画
+	if (deathParticles_) {
+		deathParticles_->Draw();
 	}
 
 	// 天球の描画
