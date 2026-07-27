@@ -9,6 +9,9 @@ GameScene::~GameScene() {
 	delete player_;
 	player_ = nullptr;
 
+	delete enemy_;
+	enemy_ = nullptr;
+
 	delete skydome_;
 	skydome_ = nullptr;
 
@@ -72,6 +75,13 @@ void GameScene::Initialize() {
 	CameraController::Rect movableArea = {11.0f, 88.0f, 6.0f, 100.0f};
 	cameraController_->SetMovableArea(movableArea);
 
+	// 敵関連
+	Model* enemyModel = Model::CreateFromOBJ("enemy", true);
+	enemy_ = new Enemy();
+	// 敵の初期位置（マップチップで指定）
+	Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(10, 18);
+	enemy_->Initialize(enemyModel, &camera_, enemyPosition);
+
 	// 天球モデル生成
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 
@@ -114,6 +124,11 @@ void GameScene::Update() {
 	// 自キャラの更新
 	player_->Update();
 
+	// 敵の更新
+	if (enemy_) {
+		enemy_->Update();
+	}
+
 	// 天球の更新
 	skydome_->Update();
 
@@ -135,6 +150,11 @@ void GameScene::Draw() {
 
 	// 自キャラの描画
 	player_->Draw();
+
+	// 敵の描画
+	if (enemy_) {
+		enemy_->Draw();
+	}
 
 	// 天球の描画
 	skydome_->Draw(camera_);

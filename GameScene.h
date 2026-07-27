@@ -1,6 +1,7 @@
 // [GameScene.h]
 #pragma once
 #include "CameraController.h"
+#include "Enemy.h"
 #include "MapChipField.h"
 #include "Player.h"
 #include "Skydome.h"
@@ -29,6 +30,9 @@ public:
 private:
 	// 自キャラ
 	Player* player_ = nullptr;
+
+	// 敵
+	Enemy* enemy_ = nullptr;
 
 	// 天球
 	Skydome* skydome_ = nullptr;
