@@ -177,30 +177,32 @@ void Player::MapCollisionDown(CollisionMapInfo& info) {
 	}
 
 	MapChipType mapChipType;
+	MapChipType mapChipTypeNext;
 	// 真下の当たり判定を行う
 	bool hit = false;
 	MapChipField::IndexSet indexSet;
-	// 左下点の判定（少し上にずらして判定を安定させる）
-	KamataEngine::Vector3 leftBottom = positionsNew[kLeftBottom];
-	leftBottom.y += kBlank;
-	indexSet = mapChipField_->GetMapChipIndexSetByPosition(leftBottom);
+
+	// 左下点の判定
+	indexSet = mapChipField_->GetMapChipIndexSetByPosition(positionsNew[kLeftBottom]);
 	mapChipType = mapChipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex);
-	if (mapChipType == MapChipType::kBlock) {
+	mapChipTypeNext = mapChipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex - 1);
+	// 隣接セルがともにブロックであればヒットしない（垂直な壁扱い）
+	if (mapChipType == MapChipType::kBlock && mapChipTypeNext != MapChipType::kBlock) {
 		hit = true;
 	}
+
 	// 右下点の判定
-	KamataEngine::Vector3 rightBottom = positionsNew[kRightBottom];
-	rightBottom.y += kBlank;
-	indexSet = mapChipField_->GetMapChipIndexSetByPosition(rightBottom);
+	indexSet = mapChipField_->GetMapChipIndexSetByPosition(positionsNew[kRightBottom]);
 	mapChipType = mapChipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex);
-	if (mapChipType == MapChipType::kBlock) {
+	mapChipTypeNext = mapChipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex - 1);
+	if (mapChipType == MapChipType::kBlock && mapChipTypeNext != MapChipType::kBlock) {
 		hit = true;
 	}
 
 	// ブロックにヒット？
 	if (hit) {
 		// めり込みを排除する方向に移動量を設定する
-		indexSet = mapChipField_->GetMapChipIndexSetByPosition(leftBottom);
+		indexSet = mapChipField_->GetMapChipIndexSetByPosition(positionsNew[kLeftBottom]);
 		MapChipField::Rect rect = mapChipField_->GetRectByIndex(indexSet.xIndex, indexSet.yIndex);
 		// Y移動量 = (ブロック上端 - 移動前自キャラ座標) + (自キャラの半径 + 微小な余白)
 		float yMovement = (rect.top - worldTransform_.translation_.y) + (kHeight / 2.0f + kBlank);
