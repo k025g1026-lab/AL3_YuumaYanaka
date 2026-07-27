@@ -135,6 +135,7 @@ private:
 	// 壁に接触している場合の処理
 	void OnCollisionWall(const CollisionMapInfo& info);
 
+
 	// 接地状態の切り替え処理
 	void SwitchOnGround(const CollisionMapInfo& info);
 
