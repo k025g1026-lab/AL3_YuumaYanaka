@@ -75,6 +75,12 @@ private:
 	// 微小な余白
 	static inline const float kBlank = 0.01f;
 
+	// 着地時の速度減衰率
+	static inline const float kAttenuationLanding = 0.5f;
+
+	// 壁接触時の速度減衰率
+	static inline const float kAttenuationWall = 0.5f;
+
 	// 定数
 	static inline const float kAcceleration = 0.1f;
 	static inline const float kAttenuation = 0.2f;
@@ -125,6 +131,12 @@ private:
 
 	// 天井に接触している場合の処理
 	void OnCollisionCeiling(const CollisionMapInfo& info);
+
+	// 壁に接触している場合の処理
+	void OnCollisionWall(const CollisionMapInfo& info);
+
+	// 接地状態の切り替え処理
+	void SwitchOnGround(const CollisionMapInfo& info);
 
 	// 指定した角の座標計算
 	KamataEngine::Vector3 CornerPosition(const KamataEngine::Vector3& center, Corner corner);

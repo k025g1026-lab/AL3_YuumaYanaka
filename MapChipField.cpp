@@ -1,5 +1,6 @@
 // [MapChipField.cpp]
 #include "MapChipField.h"
+#include <cmath>
 #include <fstream>
 #include <sstream>
 
@@ -67,8 +68,9 @@ KamataEngine::Vector3 MapChipField::GetMapChipPositionByIndex(uint32_t xIndex, u
 
 MapChipField::IndexSet MapChipField::GetMapChipIndexSetByPosition(const KamataEngine::Vector3& position) {
 	IndexSet indexSet = {};
-	indexSet.xIndex = static_cast<uint32_t>((position.x + kBlockWidth / 2.0f) / kBlockWidth);
-	indexSet.yIndex = static_cast<uint32_t>(kNumBlockVertical - 1 - (position.y + kBlockHeight / 2.0f) / kBlockHeight);
+	// std::floor を使って正確に切り捨て
+	indexSet.xIndex = static_cast<uint32_t>(std::floor((position.x + kBlockWidth / 2.0f) / kBlockWidth));
+	indexSet.yIndex = static_cast<uint32_t>(kNumBlockVertical - 1 - std::floor((position.y + kBlockHeight / 2.0f) / kBlockHeight));
 	return indexSet;
 }
 
