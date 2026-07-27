@@ -50,17 +50,20 @@ void GameScene::Initialize() {
 	cameraController_ = new CameraController();
 	cameraController_->Initialize();
 
-	// 自キャラ関連
-	Model* playerModel = Model::CreateFromOBJ("player", true);
-	player_ = new Player();
-
 	// マップチップフィールド生成
 	mapChipField_ = new MapChipField();
 	mapChipField_->LoadMapChipCsv("Resources/map.csv");
 
+	// 自キャラ関連
+	Model* playerModel = Model::CreateFromOBJ("player", true);
+	player_ = new Player();
+
 	// 初期位置をマップチップ番号で指定
 	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
 	player_->Initialize(playerModel, &camera_, playerPosition);
+
+	// マップチップデータをセット
+	player_->SetMapChipField(mapChipField_);
 
 	// カメラコントローラーに追従対象を設定
 	cameraController_->SetTarget(player_);

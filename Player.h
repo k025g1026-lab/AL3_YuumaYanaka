@@ -1,6 +1,9 @@
 // [Player.h]
 #pragma once
 #include "KamataEngine.h"
+#include <array>
+
+class MapChipField;
 
 /// <summary>
 /// 自キャラ
@@ -35,6 +38,11 @@ public:
 	/// </summary>
 	const KamataEngine::Vector3& GetVelocity() const { return velocity_; }
 
+	/// <summary>
+	/// マップチップフィールドをセット
+	/// </summary>
+	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
+
 private:
 	// ワールド変換データ
 	KamataEngine::WorldTransform worldTransform_;
@@ -57,6 +65,16 @@ private:
 	float turnFirstRotationY_ = 0.0f;
 	float turnTimer_ = 0.0f;
 
+	// マップチップによるフィールド
+	MapChipField* mapChipField_ = nullptr;
+
+	// キャラクターの当たり判定サイズ
+	static inline const float kWidth = 0.8f;
+	static inline const float kHeight = 0.8f;
+
+	// 微小な余白
+	static inline const float kBlank = 0.01f;
+
 	// 定数
 	static inline const float kAcceleration = 0.1f;
 	static inline const float kAttenuation = 0.2f;
@@ -65,4 +83,49 @@ private:
 	static inline const float kGravityAcceleration = 0.3f;
 	static inline const float kLimitFallSpeed = 1.0f;
 	static inline const float kJumpAcceleration = 1.0f;
+
+	// 角
+	enum Corner {
+		kRightBottom, // 右下
+		kLeftBottom,  // 左下
+		kRightTop,    // 右上
+		kLeftTop,     // 左上
+
+		kNumCorner // 要素数
+	};
+
+	// マップとの当たり判定情報
+	struct CollisionMapInfo {
+		bool ceiling = false;           // 天井衝突フラグ
+		bool landing = false;           // 着地フラグ
+		bool hitWall = false;           // 壁接触フラグ
+		KamataEngine::Vector3 movement; // 移動量
+	};
+
+	// 移動入力
+	void InputMove();
+
+	// マップ衝突判定
+	void MapCollision(CollisionMapInfo& info);
+
+	// マップ衝突判定 上方向
+	void MapCollisionUp(CollisionMapInfo& info);
+
+	// マップ衝突判定 下方向
+	void MapCollisionDown(CollisionMapInfo& info);
+
+	// マップ衝突判定 右方向
+	void MapCollisionRight(CollisionMapInfo& info);
+
+	// マップ衝突判定 左方向
+	void MapCollisionLeft(CollisionMapInfo& info);
+
+	// 判定結果を反映して移動させる
+	void MoveAfterCollision(const CollisionMapInfo& info);
+
+	// 天井に接触している場合の処理
+	void OnCollisionCeiling(const CollisionMapInfo& info);
+
+	// 指定した角の座標計算
+	KamataEngine::Vector3 CornerPosition(const KamataEngine::Vector3& center, Corner corner);
 };
