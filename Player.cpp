@@ -92,7 +92,11 @@ AABB Player::GetAABB() {
 	return aabb;
 }
 
-void Player::OnCollision(const Enemy* enemy) { (void)enemy; }
+void Player::OnCollision(const Enemy* enemy) {
+	(void)enemy;
+	// デスフラグを立てる
+	isDead_ = true;
+}
 
 void Player::InputMove() {
 	// 接地状態

@@ -60,6 +60,11 @@ public:
 	/// </summary>
 	void OnCollision(const Enemy* enemy);
 
+	/// <summary>
+	/// デスフラグのgetter
+	/// </summary>
+	bool IsDead() const { return isDead_; }
+
 private:
 	// ワールド変換データ
 	KamataEngine::WorldTransform worldTransform_;
@@ -84,6 +89,9 @@ private:
 
 	// マップチップによるフィールド
 	MapChipField* mapChipField_ = nullptr;
+
+	// デスフラグ
+	bool isDead_ = false;
 
 	// キャラクターの当たり判定サイズ
 	static inline const float kWidth = 0.8f;

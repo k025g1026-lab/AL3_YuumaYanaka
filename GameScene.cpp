@@ -105,10 +105,6 @@ void GameScene::Initialize() {
 	// デスパーティクル用モデル生成
 	modelParticle_ = Model::CreateFromOBJ("deathParticle", true);
 
-	// 仮の生成処理。後で消す。
-	deathParticles_ = new DeathParticles();
-	deathParticles_->Initialize(modelParticle_, &camera_, playerPosition);
-
 	// 天球モデル生成
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 
@@ -121,6 +117,12 @@ void GameScene::Initialize() {
 
 	// ブロック生成
 	GenerateBlocks();
+
+	// ゲームプレイフェーズから開始
+	phase_ = Phase::kPlay;
+
+	// 終了フラグ初期化
+	finished_ = false;
 }
 
 void GameScene::Update() {
@@ -142,51 +144,102 @@ void GameScene::Update() {
 		camera_.matProjection = debugCamera_->GetCamera().matProjection;
 		camera_.TransferMatrix();
 	} else {
-		cameraController_->Update();
+		// カメラコントローラーはプレイフェーズでのみ更新
+		if (phase_ == Phase::kPlay) {
+			cameraController_->Update();
+		}
 		camera_.matView = cameraController_->GetCamera().matView;
 		camera_.matProjection = cameraController_->GetCamera().matProjection;
 		camera_.TransferMatrix();
 	}
 
-	// 自キャラの更新
-	player_->Update();
+	// フェーズごとの更新
+	switch (phase_) {
+	case Phase::kPlay:
+		// ゲームプレイフェーズの処理
+		// 天球の更新
+		skydome_->Update();
 
-	// 敵の更新
-	for (Enemy* enemy : enemies_) {
-		if (enemy) {
-			enemy->Update();
-		}
-	}
+		// 自キャラの更新
+		player_->Update();
 
-	// デスパーティクルの更新
-	if (deathParticles_) {
-		deathParticles_->Update();
-	}
-
-	// 天球の更新
-	skydome_->Update();
-
-	// ブロックの更新
-	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
-		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
-			if (!worldTransformBlock) {
-				continue;
+		// 敵の更新
+		for (Enemy* enemy : enemies_) {
+			if (enemy) {
+				enemy->Update();
 			}
-			worldTransformBlock->matWorld_ = MakeAffineMatrix(worldTransformBlock->scale_, worldTransformBlock->rotation_, worldTransformBlock->translation_);
-			worldTransformBlock->TransferMatrix();
 		}
-	}
 
-	// 全ての当たり判定を行う（最後に呼ぶ）
-	CheckAllCollisions();
+		// ブロックの更新
+		for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
+			for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+				if (!worldTransformBlock) {
+					continue;
+				}
+				worldTransformBlock->matWorld_ = MakeAffineMatrix(worldTransformBlock->scale_, worldTransformBlock->rotation_, worldTransformBlock->translation_);
+				worldTransformBlock->TransferMatrix();
+			}
+		}
+
+		// 全ての当たり判定を行う
+		CheckAllCollisions();
+
+		// 自キャラがデス状態ならデス演出フェーズへ切り替え
+		if (player_->IsDead()) {
+			// 死亡演出フェーズに切り替え
+			phase_ = Phase::kDeath;
+			// 自キャラの座標を取得
+			const Vector3 deathParticlesPosition = player_->GetWorldPosition();
+			// 自キャラの座標にデスパーティクルを発生・初期化
+			deathParticles_ = new DeathParticles();
+			deathParticles_->Initialize(modelParticle_, &camera_, deathParticlesPosition);
+		}
+		break;
+
+	case Phase::kDeath:
+		// デス演出フェーズの処理
+		// 天球の更新
+		skydome_->Update();
+
+		// 敵の更新
+		for (Enemy* enemy : enemies_) {
+			if (enemy) {
+				enemy->Update();
+			}
+		}
+
+		// デスパーティクルの更新
+		if (deathParticles_) {
+			deathParticles_->Update();
+		}
+
+		// ブロックの更新
+		for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
+			for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+				if (!worldTransformBlock) {
+					continue;
+				}
+				worldTransformBlock->matWorld_ = MakeAffineMatrix(worldTransformBlock->scale_, worldTransformBlock->rotation_, worldTransformBlock->translation_);
+				worldTransformBlock->TransferMatrix();
+			}
+		}
+
+		// デスパーティクルが有効で、かつパーティクルの演出が終了したら
+		if (deathParticles_ && deathParticles_->IsFinished()) {
+			finished_ = true;
+		}
+		break;
+	}
 }
 
 void GameScene::Draw() {
 	// 3Dモデル描画前処理
 	Model::PreDraw();
 
-	// 自キャラの描画
-	player_->Draw();
+	// 自キャラの描画（死んでいないときだけ）
+	if (!player_->IsDead()) {
+		player_->Draw();
+	}
 
 	// 敵の描画
 	for (Enemy* enemy : enemies_) {
@@ -242,6 +295,17 @@ void GameScene::CheckAllCollisions() {
 		}
 	}
 #pragma endregion
+}
+
+void GameScene::ChangePhase() {
+	switch (phase_) {
+	case Phase::kPlay:
+		// ゲームプレイフェーズからデス演出への切り替えはUpdate内で行う
+		break;
+	case Phase::kDeath:
+		// 特に何も書かなくてよい
+		break;
+	}
 }
 
 void GameScene::GenerateBlocks() {

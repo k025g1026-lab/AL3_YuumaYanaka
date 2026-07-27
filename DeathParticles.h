@@ -27,6 +27,11 @@ public:
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// 終了フラグのgetter
+	/// </summary>
+	bool IsFinished() const { return isFinished_; }
+
 private:
 	// モデル
 	KamataEngine::Model* model_ = nullptr;

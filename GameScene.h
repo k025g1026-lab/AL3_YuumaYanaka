@@ -29,10 +29,30 @@ public:
 	// 全ての当たり判定を行う
 	void CheckAllCollisions();
 
+	// フェーズの切り替え
+	void ChangePhase();
+
+	/// <summary>
+	/// 終了フラグのgetter
+	/// </summary>
+	bool IsFinished() const { return finished_; }
+
 	// デストラクタ
 	~GameScene();
 
 private:
+	// ゲームのフェーズ（型）
+	enum class Phase {
+		kPlay,  // ゲームプレイ
+		kDeath, // デス演出
+	};
+
+	// ゲームの現在フェーズ（変数）
+	Phase phase_;
+
+	// 終了フラグ
+	bool finished_ = false;
+
 	// 自キャラ
 	Player* player_ = nullptr;
 
