@@ -3,19 +3,15 @@
 #include "AABB.h"
 #include "KamataEngine.h"
 
+class MapChipField;
 class Player;
+class Enemy;
 
-/// <summary>
-/// 敵
-/// </summary>
 class Enemy {
 public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="model">モデル</param>
-	/// <param name="camera">カメラ</param>
-	/// <param name="position">初期位置</param>
 	void Initialize(KamataEngine::Model* model, const KamataEngine::Camera* camera, const KamataEngine::Vector3& position);
 
 	/// <summary>
@@ -39,35 +35,49 @@ public:
 	AABB GetAABB();
 
 	/// <summary>
-	/// 衝突応答
+	/// 自キャラとの衝突
 	/// </summary>
 	void OnCollision(const Player* player);
 
+	/// <summary>
+	/// 敵同士の衝突
+	/// </summary>
+	void OnCollisionEnemy(Enemy* other);
+
+	/// <summary>
+	/// マップチップフィールドをセット
+	/// </summary>
+	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
+
+	const KamataEngine::Vector3& GetVelocity() const { return velocity_; }
+
 private:
-	// ワールド変換データ
+	void UpdateFacing();
+	void CheckMapWall();
+	void CheckMapGround();
+
 	KamataEngine::WorldTransform worldTransform_;
-	// モデル
 	KamataEngine::Model* model_ = nullptr;
-	// カメラ
 	const KamataEngine::Camera* camera_ = nullptr;
 
-	// 歩行の速さ
-	static inline const float kWalkSpeed = 0.05f;
+	// 速度（初期は左方向）
+	KamataEngine::Vector3 velocity_ = {-0.05f, 0.0f, 0.0f};
 
-	// 速度
-	KamataEngine::Vector3 velocity_ = {};
+	// 接地フラグ
+	bool onGround_ = false;
 
-	// 最初の角度[度]
-	static inline const float kWalkMotionAngleStart = -15.0f;
-	// 最後の角度[度]
-	static inline const float kWalkMotionAngleEnd = 15.0f;
-	// アニメーションの周期となる時間[秒]
-	static inline const float kWalkMotionTime = 0.5f;
-
-	// 経過時間
+	// 歩行アニメーション用
 	float walkTimer_ = 0.0f;
+
+	// マップ
+	MapChipField* mapChipField_ = nullptr;
 
 	// 当たり判定サイズ
 	static inline const float kWidth = 0.8f;
 	static inline const float kHeight = 0.8f;
+	static inline const float kBlank = 0.01f;
+
+	// 重力（プレイヤーと同じ緩め設定）
+	static inline const float kGravityAcceleration = 0.15f;
+	static inline const float kLimitFallSpeed = 0.7f;
 };

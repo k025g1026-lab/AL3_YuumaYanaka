@@ -1,32 +1,32 @@
-# Blender 3.5.0 MTL File: 'enemy.blend'
+# Blender 5.2.0 LTS MTL File: 'None'
 # www.blender.org
 
-newmtl Material
-Ns 360.000000
-Ka 1.000000 1.000000 1.000000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.450000
-d 1.000000
-illum 2
-map_Kd enemy.png
-
-newmtl マテリアル
+newmtl マテリアル.007
 Ns 250.000000
 Ka 1.000000 1.000000 1.000000
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
-Ni 1.450000
+Ni 1.500000
 d 1.000000
 illum 2
-map_Kd enemy.png
+map_Kd C:/Users/九十九怜/Downloads/enemyAL3.png
 
-newmtl マテリアル.001
+newmtl マテリアル.008
 Ns 250.000000
 Ka 1.000000 1.000000 1.000000
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
-Ni 1.450000
+Ni 1.500000
 d 1.000000
 illum 2
-map_Kd enemy.png
+map_Kd C:/Users/九十九怜/Downloads/enemyAL3.png
+
+newmtl マテリアル.009
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd C:/Users/九十九怜/Downloads/enemyAL3.png
