@@ -47,6 +47,7 @@ void HookStitch::TryStitch(StitchTarget* target) {
 	stitched_.push_back(target);
 	target->StartStitchCoolDown(kCoolDown);
 
+	// 古い縫いから消す
 	if (static_cast<int>(stitched_.size()) > kMaxStitch) {
 		stitched_.erase(stitched_.begin());
 	}
@@ -59,8 +60,7 @@ Vector2 HookStitch::CalcCentroid() const {
 		if (!target) {
 			continue;
 		}
-		AABB2 aabb = target->GetAABB();
-		Vector2 c = AABBCenter(aabb);
+		Vector2 c = AABBCenter(target->GetAABB());
 		sum.x += c.x;
 		sum.y += c.y;
 		++count;
@@ -72,6 +72,7 @@ Vector2 HookStitch::CalcCentroid() const {
 }
 
 bool HookStitch::CheckCinchCollision() const {
+	// 動く対象が、縫った他対象と重なったら「ぶつかった」
 	for (size_t i = 0; i < stitched_.size(); ++i) {
 		StitchTarget* a = stitched_[i];
 		if (!a) {
@@ -82,7 +83,6 @@ bool HookStitch::CheckCinchCollision() const {
 			if (!b) {
 				continue;
 			}
-			// 固定同士は無視。動く対象が他の縫い対象に当たったら衝突
 			if (a->IsFixed() && b->IsFixed()) {
 				continue;
 			}
@@ -117,7 +117,7 @@ void HookStitch::ResolveCinch(const Vector2& centroid) {
 
 	int damage = 1;
 	if (hasBossA && hasBossB && hasStake) {
-		damage = 3;
+		damage = 3; // 本ダメージ
 	} else if (stitched_.size() >= 3) {
 		damage = 2;
 	}
@@ -129,11 +129,8 @@ void HookStitch::ResolveCinch(const Vector2& centroid) {
 		if (target->GetKind() != StitchTarget::Kind::kBoss && target->GetKind() != StitchTarget::Kind::kFodder) {
 			continue;
 		}
-
 		target->OnCinchHit(damage);
-
-		AABB2 aabb = target->GetAABB();
-		Vector2 center = AABBCenter(aabb);
+		Vector2 center = AABBCenter(target->GetAABB());
 		target->ApplyKnockback({(center.x - centroid.x) * 0.08f, -8.0f});
 	}
 
@@ -145,7 +142,7 @@ void HookStitch::Cinch(Player* player) {
 		return;
 	}
 	if (stitched_.size() < 2) {
-		return;
+		return; // 1点では絞れない
 	}
 	cinchTimer_ = kCinchDuration;
 	pendingResolve_ = true;
@@ -172,8 +169,7 @@ void HookStitch::Update(Player* player, const std::vector<StitchTarget*>& target
 			if (!target || target->IsFixed()) {
 				continue;
 			}
-			AABB2 aabb = target->GetAABB();
-			Vector2 center = AABBCenter(aabb);
+			Vector2 center = AABBCenter(target->GetAABB());
 			Vector2 diff{centroid.x - center.x, centroid.y - center.y};
 			float len = std::sqrt(diff.x * diff.x + diff.y * diff.y);
 			if (len > 1.0f) {
@@ -185,8 +181,7 @@ void HookStitch::Update(Player* player, const std::vector<StitchTarget*>& target
 		}
 
 		--cinchTimer_;
-
-		// F押下ではダメージを入れない。ぶつかった瞬間、または時間切れ
+		// F押下ではダメージを入れない。衝突した瞬間、または時間切れ
 		if (pendingResolve_ && (CheckCinchCollision() || cinchTimer_ <= 0)) {
 			ResolveCinch(centroid);
 		}
@@ -211,7 +206,6 @@ void HookStitch::DrawThread(const Vector2& from, const Vector2& to, const Vector
 	if (steps < 1) {
 		steps = 1;
 	}
-
 	const int remain = static_cast<int>(dotSprites_.size()) - dotIndex_;
 	if (steps > remain) {
 		steps = remain;
@@ -219,13 +213,10 @@ void HookStitch::DrawThread(const Vector2& from, const Vector2& to, const Vector
 
 	for (int i = 1; i < steps; ++i) {
 		const float t = static_cast<float>(i) / static_cast<float>(steps);
-		const float x = from.x + diff.x * t;
-		const float y = from.y + diff.y * t;
-
 		Sprite* sprite = dotSprites_[dotIndex_++];
 		sprite->SetRotation(0.0f);
 		sprite->SetColor(color);
-		sprite->SetPosition({x - 3.0f, y - 3.0f});
+		sprite->SetPosition({from.x + diff.x * t - 3.0f, from.y + diff.y * t - 3.0f});
 		sprite->SetSize({6.0f, 6.0f});
 		sprite->Draw();
 	}
@@ -240,7 +231,6 @@ void HookStitch::DrawMark(const Vector2& center, const Vector4& color) {
 	if (markIndex >= static_cast<int>(markSprites_.size())) {
 		markIndex = 0;
 	}
-
 	Sprite* plusH = markSprites_[markIndex];
 	Sprite* plusV = markCrossSprites_[markIndex];
 	++markIndex;
@@ -271,7 +261,6 @@ void HookStitch::Draw(Player* player, const Vector2& camera) {
 	Vector4 color = (cinchTimer_ > 0) ? Vector4{1.0f, 0.25f, 0.2f, 1.0f} : Vector4{1.0f, 0.92f, 0.35f, 1.0f};
 
 	std::vector<Vector2> marks;
-	marks.reserve(stitched_.size());
 	for (StitchTarget* target : stitched_) {
 		if (!target) {
 			continue;
@@ -279,7 +268,6 @@ void HookStitch::Draw(Player* player, const Vector2& camera) {
 		Vector2 c = AABBCenter(target->GetAABB());
 		marks.push_back({c.x - camera.x, c.y - camera.y});
 	}
-
 	for (size_t i = 1; i < marks.size(); ++i) {
 		DrawThread(marks[i - 1], marks[i], color);
 	}

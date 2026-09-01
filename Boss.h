@@ -2,6 +2,9 @@
 #pragma once
 #include "StitchTarget.h"
 
+/// <summary>
+/// ボス個体。2体＋杭を絞ると本ダメージ。
+/// </summary>
 class Boss : public StitchTarget {
 public:
 	void Initialize(uint32_t textureHandle, const KamataEngine::Vector2& position, const KamataEngine::Vector4& color, float minX, float maxX);

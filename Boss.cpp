@@ -37,7 +37,6 @@ void Boss::ApplyKnockback(const Vector2& velocity) { velocity_ = velocity; }
 
 void Boss::Update() {
 	UpdateStitchCoolDown();
-
 	if (hitFlash_ > 0) {
 		--hitFlash_;
 	}
@@ -60,7 +59,6 @@ void Boss::Update() {
 
 	velocity_.y += kGravity;
 	position_.y += velocity_.y;
-
 	if (position_.y + size_.y >= kGroundY) {
 		position_.y = kGroundY - size_.y;
 		if (velocity_.y > 0.0f) {

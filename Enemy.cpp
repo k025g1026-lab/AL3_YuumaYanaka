@@ -43,6 +43,7 @@ void Enemy::Update() {
 		--hitFlash_;
 	}
 
+	// ノックバックが小さいときだけ左右パトロール
 	if (std::abs(velocity_.x) < 1.0f) {
 		position_.x += static_cast<float>(patrolDir_) * kPatrolSpeed;
 		if (position_.x <= minX_) {

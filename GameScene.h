@@ -11,6 +11,10 @@
 #include <kamataengine.h>
 #include <vector>
 
+/// <summary>
+/// 本編。1〜3面＋ボスを1ワールドとして持ち、
+/// 部屋クリア後に扉へ触れると次エリアへカメラを切り替える。
+/// </summary>
 class GameScene {
 public:
 	void Initialize();
@@ -50,7 +54,7 @@ private:
 	Stake* stakeR_ = nullptr;
 	HookStitch* hookStitch_ = nullptr;
 	std::vector<Enemy*> fodder_;
-	std::vector<int> fodderSection_;
+	std::vector<int> fodderSection_; // fodder_[i] が何面の敵か
 	std::vector<StitchTarget*> targets_;
 
 	KamataEngine::Sprite* groundSprite_ = nullptr;
@@ -70,8 +74,8 @@ private:
 	Phase phase_ = Phase::kPlay;
 
 	WorldDesc world_{};
-	int cameraSection_ = 1;
-	int saveSection_ = 1;
+	int cameraSection_ = 1; // 今映している部屋
+	int saveSection_ = 1;   // 死亡時に戻る部屋
 	bool cleared1_ = false;
 	bool cleared2_ = false;
 	bool cleared3_ = false;

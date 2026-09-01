@@ -6,6 +6,10 @@
 
 class Player;
 
+/// <summary>
+/// 縫いリストと絞りの管理。
+/// 糸は自機から伸ばさず、対象の＋マーク同士を点でつなぐ。
+/// </summary>
 class HookStitch {
 public:
 	void Initialize(uint32_t textureHandle);
@@ -34,7 +38,7 @@ private:
 	int dotIndex_ = 0;
 
 	int cinchTimer_ = 0;
-	bool pendingResolve_ = false;
+	bool pendingResolve_ = false; // 絞り中。衝突か時間切れでダメージ
 	int markAnim_ = 0;
 
 	static inline const int kMaxStitch = 4;

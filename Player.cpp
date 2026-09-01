@@ -23,6 +23,7 @@ void Player::Reset(const Vector2& position) {
 }
 
 void Player::SetMapBounds(float left, float right) {
+	// 今いる部屋からはみ出さないようにする
 	mapLeft_ = left;
 	mapRight_ = right;
 }
@@ -62,6 +63,7 @@ void Player::InputMove(float groundY) {
 	const bool pressJump = input->PushKey(DIK_SPACE) || input->PushKey(DIK_Z) || input->PushKey(DIK_W);
 	const bool pressDash = input->TriggerKey(DIK_LSHIFT) || input->TriggerKey(DIK_X);
 
+	// ダッシュ中は入力を受けず、向いている方向へ固定移動
 	if (dashTimer_ > 0) {
 		--dashTimer_;
 		velocity_.x = static_cast<float>(facing_) * kDashSpeed;
@@ -106,6 +108,7 @@ void Player::InputMove(float groundY) {
 }
 
 void Player::Update(float groundY) {
+	// 無敵タイマー消化。0になったフレームを InvincibleJustEnded で知らせる
 	invincibleJustEnded_ = false;
 	if (invincibleTimer_ > 0) {
 		--invincibleTimer_;

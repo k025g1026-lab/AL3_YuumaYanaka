@@ -2,6 +2,9 @@
 #pragma once
 #include "StitchTarget.h"
 
+/// <summary>
+/// ボス部屋の杭。縫えるが動かない。ダメージも受けない。
+/// </summary>
 class Stake : public StitchTarget {
 public:
 	void Initialize(uint32_t textureHandle, const KamataEngine::Vector2& position);

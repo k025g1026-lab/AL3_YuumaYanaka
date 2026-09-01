@@ -2,6 +2,15 @@
 #include "GameScene.h"
 #include <cmath>
 
+// BuildWorld         : 1本のワールドを生成。最初は1面カメラ
+// EnterSection       : 扉タッチ後。カメラ・移動範囲・セーブを次の部屋へ
+// UpdateCamera       : 今の部屋の左端を固定カメラにする
+// CheckSectionClear  : その部屋の雑魚が全滅したら扉解放フラグを立てる
+// BlockClosedDoors   : 未クリアの扉は壁
+// TryEnterNextArea   : 開いた扉に重なったら次エリアへ
+// ResetSectionEnemies: 死亡復帰時、今の部屋の敵だけ初期化。前の部屋の撃破は残す
+// RespawnFromSave    : ボス死は3面開始地点へ
+
 using namespace KamataEngine;
 
 GameScene::~GameScene() {

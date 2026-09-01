@@ -5,10 +5,13 @@
 
 using namespace KamataEngine;
 
-void Camera2D::SetFixed(const Vector2& topLeft) { position_ = topLeft; }
+void Camera2D::SetFixed(const Vector2& topLeft) {
+	// 部屋切り替え時に呼ぶ。追従はしない。
+	position_ = topLeft;
+}
 
 void Camera2D::UpdateFollow(const Vector2& playerCenter, float mapLeft, float mapRight, float mapTop, float mapBottom) {
-	// プレイヤーを中央より少し左に置く
+	// 未使用（以前の追従カメラ用）。残してあるだけ。
 	position_.x = playerCenter.x - kViewW * 0.38f;
 
 	const float desiredY = playerCenter.y - kViewH * 0.58f;

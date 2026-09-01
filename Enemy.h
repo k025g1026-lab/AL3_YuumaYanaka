@@ -2,6 +2,9 @@
 #pragma once
 #include "StitchTarget.h"
 
+/// <summary>
+/// 歩行雑魚。縫えて、絞るとダメージを受ける。
+/// </summary>
 class Enemy : public StitchTarget {
 public:
 	void Initialize(uint32_t textureHandle, const KamataEngine::Vector2& position, float minX, float maxX);

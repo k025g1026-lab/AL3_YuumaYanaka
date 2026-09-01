@@ -3,6 +3,9 @@
 #include "AABB2.h"
 #include "KamataEngine.h"
 
+/// <summary>
+/// 自機。移動・ジャンプ・ダッシュのみ。攻撃は縫いと絞り。
+/// </summary>
 class Player {
 public:
 	void Initialize(uint32_t textureHandle);
@@ -34,15 +37,15 @@ private:
 	KamataEngine::Vector2 velocity_{};
 	KamataEngine::Vector2 size_{48.0f, 64.0f};
 
-	int facing_ = 1;
+	int facing_ = 1; // 1=右, -1=左。ダッシュ方向に使う
 	bool onGround_ = false;
 	int dashTimer_ = 0;
-	bool usedAirDash_ = false;
+	bool usedAirDash_ = false; // 空中ダッシュは着地まで1回
 
 	static inline const int kMaxHp = 3;
 	int hp_ = kMaxHp;
 	int invincibleTimer_ = 0;
-	bool invincibleJustEnded_ = false;
+	bool invincibleJustEnded_ = false; // 無敵が切れたフレームだけ true
 
 	float mapLeft_ = 0.0f;
 	float mapRight_ = 1280.0f;
@@ -53,7 +56,7 @@ private:
 	static inline const float kGravity = 0.55f;
 	static inline const float kLimitFallSpeed = 14.0f;
 	static inline const float kJumpSpeed = -13.0f;
-	static inline const float kJumpCut = 0.45f;
+	static inline const float kJumpCut = 0.45f; // ジャンプボタンを離すと上昇を弱める
 	static inline const float kDashSpeed = 16.0f;
 	static inline const int kDashDuration = 18;
 	static inline const int kInvincibleDuration = 40;

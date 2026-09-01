@@ -2,6 +2,11 @@
 #pragma once
 #include "KamataEngine.h"
 
+/// <summary>
+/// 2Dカメラ。今は部屋ごとの固定座標だけ使う。
+/// position_ は画面左上に対応するワールド座標。
+/// 描画時は world - position_ でスクリーン座標にする。
+/// </summary>
 class Camera2D {
 public:
 	void SetFixed(const KamataEngine::Vector2& topLeft);
