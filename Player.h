@@ -1,122 +1,51 @@
 // [Player.h]
 #pragma once
-#include "AABB.h"
+#include "AABB2.h"
 #include "KamataEngine.h"
-#include <array>
 
-class MapChipField;
-class Enemy;
-
-/// <summary>
-/// 自キャラ
-/// </summary>
 class Player {
 public:
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize(KamataEngine::Model* model, const KamataEngine::Camera* camera, const KamataEngine::Vector3& position);
-
-	/// <summary>
-	/// 更新
-	/// </summary>
-	void Update();
-
-	/// <summary>
-	/// 描画
-	/// </summary>
+	void Initialize(uint32_t textureHandle);
+	void Update(float groundY);
 	void Draw();
 
-	/// <summary>
-	/// ワールドトランスフォーム取得
-	/// </summary>
-	const KamataEngine::WorldTransform& GetWorldTransform() const { return worldTransform_; }
+	AABB2 GetAABB() const;
+	KamataEngine::Vector2 GetPosition() const { return position_; }
+	KamataEngine::Vector2 GetCenter() const;
 
-	/// <summary>
-	/// 速度取得
-	/// </summary>
-	const KamataEngine::Vector3& GetVelocity() const { return velocity_; }
+	bool IsDashing() const { return dashTimer_ > 0; }
+	bool IsInvincible() const { return invincibleTimer_ > 0; }
+	int GetHp() const { return hp_; }
+	bool IsDead() const { return hp_ <= 0; }
 
-	/// <summary>
-	/// マップチップフィールドをセット
-	/// </summary>
-	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
-
-	/// <summary>
-	/// ワールド座標を取得
-	/// </summary>
-	KamataEngine::Vector3 GetWorldPosition();
-
-	/// <summary>
-	/// AABBを取得
-	/// </summary>
-	AABB GetAABB();
-
-	/// <summary>
-	/// 衝突応答
-	/// </summary>
-	void OnCollision(const Enemy* enemy);
-
-	/// <summary>
-	/// デスフラグのgetter
-	/// </summary>
-	bool IsDead() const { return isDead_; }
+	void OnDamaged();
+	void Reset(const KamataEngine::Vector2& position);
 
 private:
-	KamataEngine::WorldTransform worldTransform_;
-	KamataEngine::Model* model_ = nullptr;
-	const KamataEngine::Camera* camera_ = nullptr;
-	KamataEngine::Vector3 velocity_ = {};
-	bool onGround_ = true;
+	void InputMove(float groundY);
 
-	enum class LRDirection {
-		kRight,
-		kLeft,
-	};
-	LRDirection lrDirection_ = LRDirection::kRight;
+	KamataEngine::Sprite* sprite_ = nullptr;
+	KamataEngine::Vector2 position_{};
+	KamataEngine::Vector2 velocity_{};
+	KamataEngine::Vector2 size_{48.0f, 64.0f};
 
-	float turnFirstRotationY_ = 0.0f;
-	float turnTimer_ = 0.0f;
+	int facing_ = 1;
+	bool onGround_ = false;
 
-	MapChipField* mapChipField_ = nullptr;
-	bool isDead_ = false;
+	int dashTimer_ = 0;
+	bool usedAirDash_ = false;
 
-	static inline const float kWidth = 0.8f;
-	static inline const float kHeight = 0.8f;
-	static inline const float kBlank = 0.01f;
+	int hp_ = 3;
+	int invincibleTimer_ = 0;
 
-	static inline const float kAttenuationLanding = 0.5f;
-	static inline const float kAttenuationWall = 0.5f;
-
-	static inline const float kAcceleration = 0.05f;
-	static inline const float kAttenuation = 0.15f;
-	static inline const float kLimitRunSpeed = 0.45f;
-	static inline const float kTimeTurn = 0.3f;
-
-	// 高さは旧ジャンプ(初速1.0 / 重力0.15)と同じくらい
-	// 滞空だけ長くするため重力を下げ、初速もそれに合わせて調整
-	static inline const float kGravityAcceleration = 0.07f;
-	static inline const float kLimitFallSpeed = 0.45f;
-	static inline const float kJumpAcceleration = 0.68f;
-
-	enum Corner { kRightBottom, kLeftBottom, kRightTop, kLeftTop, kNumCorner };
-
-	struct CollisionMapInfo {
-		bool ceiling = false;
-		bool landing = false;
-		bool hitWall = false;
-		KamataEngine::Vector3 movement = {};
-	};
-
-	void InputMove();
-	void MapCollision(CollisionMapInfo& info);
-	void MapCollisionUp(CollisionMapInfo& info);
-	void MapCollisionDown(CollisionMapInfo& info);
-	void MapCollisionRight(CollisionMapInfo& info);
-	void MapCollisionLeft(CollisionMapInfo& info);
-	void MoveAfterCollision(const CollisionMapInfo& info);
-	void OnCollisionCeiling(const CollisionMapInfo& info);
-	void OnCollisionWall(const CollisionMapInfo& info);
-	void SwitchOnGround(const CollisionMapInfo& info);
-	KamataEngine::Vector3 CornerPosition(const KamataEngine::Vector3& center, Corner corner);
+	static inline const float kAcceleration = 1.2f;
+	static inline const float kAttenuation = 0.18f;
+	static inline const float kLimitRunSpeed = 6.0f;
+	static inline const float kGravity = 0.55f;
+	static inline const float kLimitFallSpeed = 14.0f;
+	static inline const float kJumpSpeed = -13.0f;
+	static inline const float kJumpCut = 0.45f;
+	static inline const float kDashSpeed = 16.0f; // 元: 14
+	static inline const int kDashDuration = 18;   // 元: 10
+	static inline const int kInvincibleDuration = 40;
 };

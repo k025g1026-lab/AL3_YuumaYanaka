@@ -18,32 +18,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Matrix.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="CameraController.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="MapChipField.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Skydome.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <FxCompile Include="Resources\shaders\SpritePS.hlsl">
       <Filter>シェーダー ファイル</Filter>
     </FxCompile>
@@ -93,26 +67,46 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameScene.h">
+    <ClInclude Include="AABB2.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="StitchTarget.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Matrix.h">
+    <ClInclude Include="Boss.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="CameraController.h">
+    <ClInclude Include="Stake.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MapChipField.h">
+    <ClInclude Include="HookStitch.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Skydome.h">
+    <ClInclude Include="GameScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Enemy.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Player.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Boss.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Stake.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="HookStitch.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

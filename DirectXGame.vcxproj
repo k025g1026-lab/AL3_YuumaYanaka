@@ -20,6 +20,7 @@
     <ProjectGuid>{21b76583-db5e-4750-b00c-fbcf46abce48}</ProjectGuid>
     <RootNamespace>DirectXGame</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>10DJ</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -163,18 +164,6 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CameraController.cpp" />
-    <ClCompile Include="DeathParticles.cpp" />
-    <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="GameScene.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="MapChipField.cpp" />
-    <ClCompile Include="Matrix.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Skydome.cpp" />
-    <ClCompile Include="TitleScene.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <FxCompile Include="Resources\shaders\TerrainPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
@@ -272,16 +261,21 @@
     <None Include="Resources\shaders\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AABB.h" />
-    <ClInclude Include="CameraController.h" />
-    <ClInclude Include="DeathParticles.h" />
-    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="AABB2.h" />
+    <ClInclude Include="Boss.h" />
     <ClInclude Include="GameScene.h" />
-    <ClInclude Include="MapChipField.h" />
-    <ClInclude Include="Matrix.h" />
+    <ClInclude Include="HookStitch.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="Skydome.h" />
-    <ClInclude Include="TitleScene.h" />
+    <ClInclude Include="Stake.h" />
+    <ClInclude Include="StitchTarget.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Boss.cpp" />
+    <ClCompile Include="GameScene.cpp" />
+    <ClCompile Include="HookStitch.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Stake.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
