@@ -123,18 +123,18 @@ void HookStitch::ResolveCinch(const Vector2& centroid) {
 	}
 
 	for (StitchTarget* target : stitched_) {
-		if (!target || target->GetKind() != StitchTarget::Kind::kBoss) {
+		if (!target) {
 			continue;
 		}
+		if (target->GetKind() != StitchTarget::Kind::kBoss && target->GetKind() != StitchTarget::Kind::kFodder) {
+			continue;
+		}
+
 		target->OnCinchHit(damage);
 
 		AABB2 aabb = target->GetAABB();
 		Vector2 center = AABBCenter(aabb);
-		Boss* boss = dynamic_cast<Boss*>(target);
-		if (boss) {
-			Vector2 kb{(center.x - centroid.x) * 0.08f, -8.0f};
-			boss->ApplyKnockback(kb);
-		}
+		target->ApplyKnockback({(center.x - centroid.x) * 0.08f, -8.0f});
 	}
 
 	Clear();
@@ -264,7 +264,7 @@ void HookStitch::DrawMark(const Vector2& center, const Vector4& color) {
 	plusV->Draw();
 }
 
-void HookStitch::Draw(Player* player) {
+void HookStitch::Draw(Player* player, const Vector2& camera) {
 	(void)player;
 	dotIndex_ = 0;
 
@@ -276,7 +276,8 @@ void HookStitch::Draw(Player* player) {
 		if (!target) {
 			continue;
 		}
-		marks.push_back(AABBCenter(target->GetAABB()));
+		Vector2 c = AABBCenter(target->GetAABB());
+		marks.push_back({c.x - camera.x, c.y - camera.y});
 	}
 
 	for (size_t i = 1; i < marks.size(); ++i) {

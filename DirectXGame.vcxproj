@@ -263,14 +263,19 @@
   <ItemGroup>
     <ClInclude Include="AABB2.h" />
     <ClInclude Include="Boss.h" />
+    <ClInclude Include="Camera2D.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="HookStitch.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Stage.h" />
     <ClInclude Include="Stake.h" />
     <ClInclude Include="StitchTarget.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Boss.cpp" />
+    <ClCompile Include="Camera2D.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="HookStitch.cpp" />
     <ClCompile Include="main.cpp" />

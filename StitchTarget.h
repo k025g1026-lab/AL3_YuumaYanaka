@@ -3,20 +3,18 @@
 #include "AABB2.h"
 #include "KamataEngine.h"
 
-/// <summary>
-/// 縫える対象の共通インタフェース
-/// </summary>
 class StitchTarget {
 public:
 	enum class Kind {
 		kBoss,
 		kStake,
+		kFodder,
 	};
 
 	virtual ~StitchTarget() = default;
 
 	virtual void Update() = 0;
-	virtual void Draw() = 0;
+	virtual void Draw(const KamataEngine::Vector2& camera) = 0;
 
 	virtual AABB2 GetAABB() const = 0;
 	virtual KamataEngine::Vector2 GetPosition() const = 0;
@@ -29,6 +27,7 @@ public:
 	virtual bool IsDead() const = 0;
 
 	virtual void OnCinchHit(int damage) = 0;
+	virtual void ApplyKnockback(const KamataEngine::Vector2& velocity) { (void)velocity; }
 
 	bool IsStitchCooling() const { return stitchCoolDown_ > 0; }
 	void StartStitchCoolDown(int frames) { stitchCoolDown_ = frames; }

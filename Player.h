@@ -7,12 +7,13 @@ class Player {
 public:
 	void Initialize(uint32_t textureHandle);
 	void Update(float groundY);
-	void Draw();
+	void Draw(const KamataEngine::Vector2& camera);
 
 	AABB2 GetAABB() const;
 	KamataEngine::Vector2 GetPosition() const { return position_; }
 	KamataEngine::Vector2 GetCenter() const;
 	void SetPosition(const KamataEngine::Vector2& position) { position_ = position; }
+	void SetMapBounds(float left, float right);
 
 	bool IsDashing() const { return dashTimer_ > 0; }
 	bool IsInvincible() const { return invincibleTimer_ > 0; }
@@ -35,7 +36,6 @@ private:
 
 	int facing_ = 1;
 	bool onGround_ = false;
-
 	int dashTimer_ = 0;
 	bool usedAirDash_ = false;
 
@@ -43,6 +43,9 @@ private:
 	int hp_ = kMaxHp;
 	int invincibleTimer_ = 0;
 	bool invincibleJustEnded_ = false;
+
+	float mapLeft_ = 0.0f;
+	float mapRight_ = 1280.0f;
 
 	static inline const float kAcceleration = 1.2f;
 	static inline const float kAttenuation = 0.18f;

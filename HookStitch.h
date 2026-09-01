@@ -10,7 +10,7 @@ class HookStitch {
 public:
 	void Initialize(uint32_t textureHandle);
 	void Update(Player* player, const std::vector<StitchTarget*>& targets);
-	void Draw(Player* player);
+	void Draw(Player* player, const KamataEngine::Vector2& camera);
 
 	void TryStitch(StitchTarget* target);
 	void Cinch(Player* player);

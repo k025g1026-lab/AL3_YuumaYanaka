@@ -22,6 +22,11 @@ void Player::Reset(const Vector2& position) {
 	invincibleJustEnded_ = false;
 }
 
+void Player::SetMapBounds(float left, float right) {
+	mapLeft_ = left;
+	mapRight_ = right;
+}
+
 void Player::SetInvincible(int frames) {
 	if (frames > invincibleTimer_) {
 		invincibleTimer_ = frames;
@@ -114,12 +119,12 @@ void Player::Update(float groundY) {
 	position_.x += velocity_.x;
 	position_.y += velocity_.y;
 
-	if (position_.x < 40.0f) {
-		position_.x = 40.0f;
+	if (position_.x < mapLeft_ + 40.0f) {
+		position_.x = mapLeft_ + 40.0f;
 		velocity_.x = 0.0f;
 	}
-	if (position_.x > 1280.0f - 40.0f - size_.x) {
-		position_.x = 1280.0f - 40.0f - size_.x;
+	if (position_.x > mapRight_ - 40.0f - size_.x) {
+		position_.x = mapRight_ - 40.0f - size_.x;
 		velocity_.x = 0.0f;
 	}
 
@@ -133,7 +138,7 @@ void Player::Update(float groundY) {
 	}
 }
 
-void Player::Draw() {
+void Player::Draw(const Vector2& camera) {
 	if (!sprite_) {
 		return;
 	}
@@ -144,7 +149,7 @@ void Player::Draw() {
 	} else {
 		sprite_->SetColor({0.35f, 0.85f, 1.0f, 1.0f});
 	}
-	sprite_->SetPosition(position_);
+	sprite_->SetPosition({position_.x - camera.x, position_.y - camera.y});
 	sprite_->SetSize(size_);
 	sprite_->Draw();
 }

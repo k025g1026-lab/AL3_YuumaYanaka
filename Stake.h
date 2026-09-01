@@ -6,7 +6,7 @@ class Stake : public StitchTarget {
 public:
 	void Initialize(uint32_t textureHandle, const KamataEngine::Vector2& position);
 	void Update() override;
-	void Draw() override;
+	void Draw(const KamataEngine::Vector2& camera) override;
 
 	AABB2 GetAABB() const override;
 	KamataEngine::Vector2 GetPosition() const override { return position_; }

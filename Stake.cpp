@@ -17,12 +17,12 @@ AABB2 Stake::GetAABB() const {
 
 void Stake::Update() { UpdateStitchCoolDown(); }
 
-void Stake::Draw() {
+void Stake::Draw(const Vector2& camera) {
 	if (!sprite_) {
 		return;
 	}
 	sprite_->SetColor({0.75f, 0.75f, 0.7f, 1.0f});
-	sprite_->SetPosition(position_);
+	sprite_->SetPosition({position_.x - camera.x, position_.y - camera.y});
 	sprite_->SetSize(size_);
 	sprite_->Draw();
 }
