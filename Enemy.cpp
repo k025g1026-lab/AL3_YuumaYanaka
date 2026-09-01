@@ -1,5 +1,6 @@
 // [Enemy.cpp]
 #include "Enemy.h"
+#include "MapChipField.h"
 #include <cmath>
 
 using namespace KamataEngine;
@@ -34,7 +35,7 @@ void Enemy::OnCinchHit(int damage) {
 
 void Enemy::ApplyKnockback(const Vector2& velocity) { velocity_ = velocity; }
 
-void Enemy::Update() {
+void Enemy::Update(MapChipField* mapChipField) {
 	UpdateStitchCoolDown();
 	if (hp_ <= 0) {
 		return;
@@ -43,7 +44,6 @@ void Enemy::Update() {
 		--hitFlash_;
 	}
 
-	// ノックバックが小さいときだけ左右パトロール
 	if (std::abs(velocity_.x) < 1.0f) {
 		position_.x += static_cast<float>(patrolDir_) * kPatrolSpeed;
 		if (position_.x <= minX_) {
@@ -60,12 +60,26 @@ void Enemy::Update() {
 		velocity_.x *= 0.90f;
 	}
 
+	if (mapChipField) {
+		AABB2 aabb = GetAABB();
+		float resolvedX = position_.x;
+		if (mapChipField->ResolveBlockX(aabb, resolvedX, static_cast<float>(patrolDir_))) {
+			position_.x = resolvedX;
+			patrolDir_ *= -1;
+		}
+	}
+
 	velocity_.y += kGravity;
 	position_.y += velocity_.y;
-	if (position_.y + size_.y >= kGroundY) {
-		position_.y = kGroundY - size_.y;
-		if (velocity_.y > 0.0f) {
-			velocity_.y = 0.0f;
+	if (mapChipField) {
+		AABB2 aabb = GetAABB();
+		float resolvedY = position_.y;
+		bool landed = false;
+		if (mapChipField->ResolveBlockY(aabb, resolvedY, velocity_.y, landed)) {
+			position_.y = resolvedY;
+			if (landed && velocity_.y > 0.0f) {
+				velocity_.y = 0.0f;
+			}
 		}
 	}
 }

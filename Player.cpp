@@ -1,6 +1,7 @@
 // [Player.cpp]
 #define NOMINMAX
 #include "Player.h"
+#include "MapChipField.h"
 #include <algorithm>
 
 using namespace KamataEngine;
@@ -23,7 +24,6 @@ void Player::Reset(const Vector2& position) {
 }
 
 void Player::SetMapBounds(float left, float right) {
-	// 今いる部屋からはみ出さないようにする
 	mapLeft_ = left;
 	mapRight_ = right;
 }
@@ -55,7 +55,7 @@ void Player::OnDamaged() {
 	velocity_.x = static_cast<float>(-facing_) * 4.0f;
 }
 
-void Player::InputMove(float groundY) {
+void Player::InputMove() {
 	Input* input = Input::GetInstance();
 
 	const bool pressRight = input->PushKey(DIK_RIGHT) || input->PushKey(DIK_D);
@@ -63,7 +63,6 @@ void Player::InputMove(float groundY) {
 	const bool pressJump = input->PushKey(DIK_SPACE) || input->PushKey(DIK_Z) || input->PushKey(DIK_W);
 	const bool pressDash = input->TriggerKey(DIK_LSHIFT) || input->TriggerKey(DIK_X);
 
-	// ダッシュ中は入力を受けず、向いている方向へ固定移動
 	if (dashTimer_ > 0) {
 		--dashTimer_;
 		velocity_.x = static_cast<float>(facing_) * kDashSpeed;
@@ -103,12 +102,9 @@ void Player::InputMove(float groundY) {
 			velocity_.y = kLimitFallSpeed;
 		}
 	}
-
-	(void)groundY;
 }
 
-void Player::Update(float groundY) {
-	// 無敵タイマー消化。0になったフレームを InvincibleJustEnded で知らせる
+void Player::Update(MapChipField* mapChipField) {
 	invincibleJustEnded_ = false;
 	if (invincibleTimer_ > 0) {
 		--invincibleTimer_;
@@ -117,25 +113,43 @@ void Player::Update(float groundY) {
 		}
 	}
 
-	InputMove(groundY);
+	InputMove();
 
 	position_.x += velocity_.x;
+	AABB2 aabb = GetAABB();
+	float resolvedX = position_.x;
+	if (mapChipField && mapChipField->ResolveBlockX(aabb, resolvedX, velocity_.x)) {
+		position_.x = resolvedX;
+		velocity_.x = 0.0f;
+	}
+
+	if (position_.x < mapLeft_ + 8.0f) {
+		position_.x = mapLeft_ + 8.0f;
+		velocity_.x = 0.0f;
+	}
+	if (position_.x > mapRight_ - 8.0f - size_.x) {
+		position_.x = mapRight_ - 8.0f - size_.x;
+		velocity_.x = 0.0f;
+	}
+
 	position_.y += velocity_.y;
-
-	if (position_.x < mapLeft_ + 40.0f) {
-		position_.x = mapLeft_ + 40.0f;
-		velocity_.x = 0.0f;
-	}
-	if (position_.x > mapRight_ - 40.0f - size_.x) {
-		position_.x = mapRight_ - 40.0f - size_.x;
-		velocity_.x = 0.0f;
-	}
-
-	if (position_.y + size_.y >= groundY) {
-		position_.y = groundY - size_.y;
-		velocity_.y = 0.0f;
-		onGround_ = true;
-		usedAirDash_ = false;
+	aabb = GetAABB();
+	float resolvedY = position_.y;
+	bool landed = false;
+	if (mapChipField && mapChipField->ResolveBlockY(aabb, resolvedY, velocity_.y, landed)) {
+		position_.y = resolvedY;
+		if (landed) {
+			onGround_ = true;
+			usedAirDash_ = false;
+			if (velocity_.y > 0.0f) {
+				velocity_.y = 0.0f;
+			}
+		} else {
+			if (velocity_.y < 0.0f) {
+				velocity_.y = 0.0f;
+			}
+			onGround_ = false;
+		}
 	} else {
 		onGround_ = false;
 	}

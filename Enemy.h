@@ -2,15 +2,14 @@
 #pragma once
 #include "StitchTarget.h"
 
-/// <summary>
-/// 歩行雑魚。縫えて、絞るとダメージを受ける。
-/// </summary>
+class MapChipField;
+
 class Enemy : public StitchTarget {
 public:
 	void Initialize(uint32_t textureHandle, const KamataEngine::Vector2& position, float minX, float maxX);
-
-	void Update() override;
+	void Update(MapChipField* mapChipField);
 	void Draw(const KamataEngine::Vector2& camera) override;
+	void Update() override { Update(nullptr); }
 
 	AABB2 GetAABB() const override;
 	KamataEngine::Vector2 GetPosition() const override { return position_; }
@@ -42,6 +41,5 @@ private:
 	float maxX_ = 0.0f;
 
 	static inline const float kGravity = 0.55f;
-	static inline const float kGroundY = 640.0f;
 	static inline const float kPatrolSpeed = 1.4f;
 };

@@ -1,5 +1,6 @@
 // [Boss.cpp]
 #include "Boss.h"
+#include "MapChipField.h"
 #include <cmath>
 
 using namespace KamataEngine;
@@ -35,7 +36,7 @@ void Boss::OnCinchHit(int damage) {
 
 void Boss::ApplyKnockback(const Vector2& velocity) { velocity_ = velocity; }
 
-void Boss::Update() {
+void Boss::Update(MapChipField* mapChipField) {
 	UpdateStitchCoolDown();
 	if (hitFlash_ > 0) {
 		--hitFlash_;
@@ -57,12 +58,26 @@ void Boss::Update() {
 		velocity_.x *= 0.92f;
 	}
 
+	if (mapChipField) {
+		AABB2 aabb = GetAABB();
+		float resolvedX = position_.x;
+		if (mapChipField->ResolveBlockX(aabb, resolvedX, static_cast<float>(patrolDir_))) {
+			position_.x = resolvedX;
+			patrolDir_ *= -1;
+		}
+	}
+
 	velocity_.y += kGravity;
 	position_.y += velocity_.y;
-	if (position_.y + size_.y >= kGroundY) {
-		position_.y = kGroundY - size_.y;
-		if (velocity_.y > 0.0f) {
-			velocity_.y = 0.0f;
+	if (mapChipField) {
+		AABB2 aabb = GetAABB();
+		float resolvedY = position_.y;
+		bool landed = false;
+		if (mapChipField->ResolveBlockY(aabb, resolvedY, velocity_.y, landed)) {
+			position_.y = resolvedY;
+			if (landed && velocity_.y > 0.0f) {
+				velocity_.y = 0.0f;
+			}
 		}
 	}
 }

@@ -2,14 +2,14 @@
 #pragma once
 #include "StitchTarget.h"
 
-/// <summary>
-/// ボス個体。2体＋杭を絞ると本ダメージ。
-/// </summary>
+class MapChipField;
+
 class Boss : public StitchTarget {
 public:
 	void Initialize(uint32_t textureHandle, const KamataEngine::Vector2& position, const KamataEngine::Vector4& color, float minX, float maxX);
 
-	void Update() override;
+	void Update() override { Update(nullptr); }
+	void Update(MapChipField* mapChipField);
 	void Draw(const KamataEngine::Vector2& camera) override;
 
 	AABB2 GetAABB() const override;
@@ -38,12 +38,10 @@ private:
 	static inline const int kMaxHp = 6;
 	int hp_ = kMaxHp;
 	int hitFlash_ = 0;
-
 	int patrolDir_ = 1;
 	float minX_ = 80.0f;
 	float maxX_ = 1100.0f;
 
 	static inline const float kGravity = 0.45f;
-	static inline const float kGroundY = 640.0f;
 	static inline const float kPatrolSpeed = 1.6f;
 };

@@ -3,13 +3,12 @@
 #include "AABB2.h"
 #include "KamataEngine.h"
 
-/// <summary>
-/// 自機。移動・ジャンプ・ダッシュのみ。攻撃は縫いと絞り。
-/// </summary>
+class MapChipField;
+
 class Player {
 public:
 	void Initialize(uint32_t textureHandle);
-	void Update(float groundY);
+	void Update(MapChipField* mapChipField);
 	void Draw(const KamataEngine::Vector2& camera);
 
 	AABB2 GetAABB() const;
@@ -30,22 +29,22 @@ public:
 	void Reset(const KamataEngine::Vector2& position);
 
 private:
-	void InputMove(float groundY);
+	void InputMove();
 
 	KamataEngine::Sprite* sprite_ = nullptr;
 	KamataEngine::Vector2 position_{};
 	KamataEngine::Vector2 velocity_{};
 	KamataEngine::Vector2 size_{48.0f, 64.0f};
 
-	int facing_ = 1; // 1=右, -1=左。ダッシュ方向に使う
+	int facing_ = 1;
 	bool onGround_ = false;
 	int dashTimer_ = 0;
-	bool usedAirDash_ = false; // 空中ダッシュは着地まで1回
+	bool usedAirDash_ = false;
 
 	static inline const int kMaxHp = 3;
 	int hp_ = kMaxHp;
 	int invincibleTimer_ = 0;
-	bool invincibleJustEnded_ = false; // 無敵が切れたフレームだけ true
+	bool invincibleJustEnded_ = false;
 
 	float mapLeft_ = 0.0f;
 	float mapRight_ = 1280.0f;
@@ -56,7 +55,7 @@ private:
 	static inline const float kGravity = 0.55f;
 	static inline const float kLimitFallSpeed = 14.0f;
 	static inline const float kJumpSpeed = -13.0f;
-	static inline const float kJumpCut = 0.45f; // ジャンプボタンを離すと上昇を弱める
+	static inline const float kJumpCut = 0.45f;
 	static inline const float kDashSpeed = 16.0f;
 	static inline const int kDashDuration = 18;
 	static inline const int kInvincibleDuration = 40;

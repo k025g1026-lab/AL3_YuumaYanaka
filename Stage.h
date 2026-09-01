@@ -30,8 +30,9 @@ struct FodderSpawn {
 /// </summary>
 struct DoorDesc {
 	float x = 0.0f;
-	float width = 48.0f;
-	float height = 220.0f;
+	float y = 0.0f;
+	float width = 64.0f;
+	float height = 64.0f;
 	int openAfterSection = 1;
 	int leadsToSection = 2;
 };
