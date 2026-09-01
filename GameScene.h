@@ -4,6 +4,7 @@
 #include "HookStitch.h"
 #include "Player.h"
 #include "Stake.h"
+#include <array>
 #include <kamataengine.h>
 #include <vector>
 
@@ -23,6 +24,8 @@ private:
 
 	void CheckStitchOverlaps();
 	void CheckPlayerHits();
+	void PushPlayerOutOfBosses();
+	void DrawHp();
 
 	Player* player_ = nullptr;
 	Boss* bossA_ = nullptr;
@@ -35,6 +38,12 @@ private:
 
 	KamataEngine::Sprite* groundSprite_ = nullptr;
 	KamataEngine::Sprite* backSprite_ = nullptr;
+
+	std::array<KamataEngine::Sprite*, 3> playerHpSprites_{};
+	KamataEngine::Sprite* bossAHpBack_ = nullptr;
+	KamataEngine::Sprite* bossAHpFill_ = nullptr;
+	KamataEngine::Sprite* bossBHpBack_ = nullptr;
+	KamataEngine::Sprite* bossBHpFill_ = nullptr;
 
 	uint32_t whiteTexture_ = 0;
 	Phase phase_ = Phase::kPlay;

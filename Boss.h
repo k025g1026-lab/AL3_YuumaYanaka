@@ -4,7 +4,8 @@
 
 class Boss : public StitchTarget {
 public:
-	void Initialize(uint32_t textureHandle, const KamataEngine::Vector2& position, const KamataEngine::Vector4& color);
+	void Initialize(uint32_t textureHandle, const KamataEngine::Vector2& position, const KamataEngine::Vector4& color, float minX, float maxX);
+
 	void Update() override;
 	void Draw() override;
 
@@ -20,6 +21,8 @@ public:
 
 	void OnCinchHit(int damage) override;
 	int GetHp() const { return hp_; }
+	int GetMaxHp() const { return kMaxHp; }
+	KamataEngine::Vector2 GetSize() const { return size_; }
 	void ApplyKnockback(const KamataEngine::Vector2& velocity);
 
 private:
@@ -28,9 +31,16 @@ private:
 	KamataEngine::Vector2 velocity_{};
 	KamataEngine::Vector2 size_{96.0f, 120.0f};
 	KamataEngine::Vector4 color_{1.0f, 0.3f, 0.3f, 1.0f};
-	int hp_ = 6;
+
+	static inline const int kMaxHp = 6;
+	int hp_ = kMaxHp;
 	int hitFlash_ = 0;
+
+	int patrolDir_ = 1;
+	float minX_ = 80.0f;
+	float maxX_ = 1100.0f;
 
 	static inline const float kGravity = 0.45f;
 	static inline const float kGroundY = 640.0f;
+	static inline const float kPatrolSpeed = 1.6f;
 };

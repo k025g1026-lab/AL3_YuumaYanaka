@@ -1,14 +1,18 @@
 // [Boss.cpp]
 #include "Boss.h"
+#include <cmath>
 
 using namespace KamataEngine;
 
-void Boss::Initialize(uint32_t textureHandle, const Vector2& position, const Vector4& color) {
+void Boss::Initialize(uint32_t textureHandle, const Vector2& position, const Vector4& color, float minX, float maxX) {
 	sprite_ = Sprite::Create(textureHandle, {0.0f, 0.0f});
 	position_ = position;
 	color_ = color;
-	hp_ = 6;
+	minX_ = minX;
+	maxX_ = maxX;
+	hp_ = kMaxHp;
 	velocity_ = {};
+	patrolDir_ = 1;
 }
 
 AABB2 Boss::GetAABB() const {
@@ -29,9 +33,7 @@ void Boss::OnCinchHit(int damage) {
 	hitFlash_ = 10;
 }
 
-void Boss::ApplyKnockback(const Vector2& velocity) {
-	velocity_ = velocity;
-}
+void Boss::ApplyKnockback(const Vector2& velocity) { velocity_ = velocity; }
 
 void Boss::Update() {
 	UpdateStitchCoolDown();
@@ -40,22 +42,31 @@ void Boss::Update() {
 		--hitFlash_;
 	}
 
+	// ノックバックが小さいときだけ左右移動
+	if (std::abs(velocity_.x) < 1.0f) {
+		position_.x += static_cast<float>(patrolDir_) * kPatrolSpeed;
+		if (position_.x <= minX_) {
+			position_.x = minX_;
+			patrolDir_ = 1;
+		}
+		if (position_.x >= maxX_) {
+			position_.x = maxX_;
+			patrolDir_ = -1;
+		}
+		velocity_.x *= 0.8f;
+	} else {
+		position_.x += velocity_.x;
+		velocity_.x *= 0.92f;
+	}
+
 	velocity_.y += kGravity;
-	position_.x += velocity_.x;
 	position_.y += velocity_.y;
-	velocity_.x *= 0.92f;
 
 	if (position_.y + size_.y >= kGroundY) {
 		position_.y = kGroundY - size_.y;
 		if (velocity_.y > 0.0f) {
 			velocity_.y = 0.0f;
 		}
-	}
-	if (position_.x < 80.0f) {
-		position_.x = 80.0f;
-	}
-	if (position_.x > 1280.0f - 80.0f - size_.x) {
-		position_.x = 1280.0f - 80.0f - size_.x;
 	}
 }
 

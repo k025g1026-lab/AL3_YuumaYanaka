@@ -17,8 +17,16 @@ void Player::Reset(const Vector2& position) {
 	onGround_ = false;
 	dashTimer_ = 0;
 	usedAirDash_ = false;
-	hp_ = 3;
+	hp_ = kMaxHp;
 	invincibleTimer_ = 0;
+	invincibleJustEnded_ = false;
+}
+
+void Player::SetInvincible(int frames) {
+	if (frames > invincibleTimer_) {
+		invincibleTimer_ = frames;
+	}
+	invincibleJustEnded_ = false;
 }
 
 Vector2 Player::GetCenter() const { return {position_.x + size_.x * 0.5f, position_.y + size_.y * 0.5f}; }
@@ -36,6 +44,7 @@ void Player::OnDamaged() {
 	}
 	--hp_;
 	invincibleTimer_ = kInvincibleDuration;
+	invincibleJustEnded_ = false;
 	velocity_.y = -6.0f;
 	velocity_.x = static_cast<float>(-facing_) * 4.0f;
 }
@@ -70,7 +79,6 @@ void Player::InputMove(float groundY) {
 		velocity_.y = kJumpSpeed;
 		onGround_ = false;
 	} else if (!onGround_ && !pressJump && velocity_.y < 0.0f) {
-		// 可変ジャンプ：離すと上昇を弱める
 		velocity_.y *= kJumpCut;
 	}
 
@@ -93,8 +101,12 @@ void Player::InputMove(float groundY) {
 }
 
 void Player::Update(float groundY) {
+	invincibleJustEnded_ = false;
 	if (invincibleTimer_ > 0) {
 		--invincibleTimer_;
+		if (invincibleTimer_ == 0) {
+			invincibleJustEnded_ = true;
+		}
 	}
 
 	InputMove(groundY);
@@ -125,7 +137,6 @@ void Player::Draw() {
 	if (!sprite_) {
 		return;
 	}
-	// 無敵中は点滅
 	if (invincibleTimer_ > 0 && (invincibleTimer_ / 2) % 2 == 0) {
 		sprite_->SetColor({0.4f, 0.8f, 1.0f, 0.4f});
 	} else if (dashTimer_ > 0) {

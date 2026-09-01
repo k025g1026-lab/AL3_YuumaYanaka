@@ -12,10 +12,14 @@ public:
 	AABB2 GetAABB() const;
 	KamataEngine::Vector2 GetPosition() const { return position_; }
 	KamataEngine::Vector2 GetCenter() const;
+	void SetPosition(const KamataEngine::Vector2& position) { position_ = position; }
 
 	bool IsDashing() const { return dashTimer_ > 0; }
 	bool IsInvincible() const { return invincibleTimer_ > 0; }
+	bool InvincibleJustEnded() const { return invincibleJustEnded_; }
+	void SetInvincible(int frames);
 	int GetHp() const { return hp_; }
+	int GetMaxHp() const { return kMaxHp; }
 	bool IsDead() const { return hp_ <= 0; }
 
 	void OnDamaged();
@@ -35,8 +39,10 @@ private:
 	int dashTimer_ = 0;
 	bool usedAirDash_ = false;
 
-	int hp_ = 3;
+	static inline const int kMaxHp = 3;
+	int hp_ = kMaxHp;
 	int invincibleTimer_ = 0;
+	bool invincibleJustEnded_ = false;
 
 	static inline const float kAcceleration = 1.2f;
 	static inline const float kAttenuation = 0.18f;
@@ -45,7 +51,7 @@ private:
 	static inline const float kLimitFallSpeed = 14.0f;
 	static inline const float kJumpSpeed = -13.0f;
 	static inline const float kJumpCut = 0.45f;
-	static inline const float kDashSpeed = 16.0f; // 元: 14
-	static inline const int kDashDuration = 18;   // 元: 10
+	static inline const float kDashSpeed = 16.0f;
+	static inline const int kDashDuration = 18;
 	static inline const int kInvincibleDuration = 40;
 };
